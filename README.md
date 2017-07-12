@@ -9,15 +9,7 @@ The probe will attach to a queue namned '**static_enrichment**'. This queue can 
 
 # Benchmark 
 
-When generate_new_alarm is set '**no**' : 
-
-- A single thread can take around 50,000 alarms every seconds (with one rule).
-
-When generate new_alarm is set '**yes**' : 
-
-- A single thread can take around 340 alarms every seconds (with one rule).
-
-> I Work to improve the second one!
+- A single thread can take around 400 alarms every seconds (with one rule).
 
 # Configuration 
 
@@ -42,7 +34,6 @@ When generate new_alarm is set '**yes**' :
 -->
 <enrichment-rules>
     exclusive_enrichment = no <!-- if yes: break the processing on the first enrichment rule matched, so only one enrichment will by applied by message -->
-    generate_new_alarm = no <!-- Publish a new complete alarm, allow to update other field than udata but have a high performance cost -->
     <100> <!-- The name of your rule, put what you want like 'superRule' or 55 etc -->
         match_alarm_field = udata.level <!-- field to match -->
         match_alarm_regexp = 1 <!-- regexp (perl) -->

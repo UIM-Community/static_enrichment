@@ -10,7 +10,6 @@
 </setup>
 <enrichment-rules> overwrite
    exclusive_enrichment = no
-   generate_new_alarm = no
    <100>
       match_alarm_field = udata.level
       match_alarm_regexp = 1
@@ -24,6 +23,7 @@
     <heartbeat>
         severity = 5
         suppkey = test
+        message = alarm message
         subsys = 1.1.
     </heartbeat>
 </messages>

@@ -18,8 +18,8 @@ use Perluim::Addons::CFGManager;
 
 # Global variables
 $Perluim::API::Debug = 1;
-my ($STR_Login,$STR_Password,$STR_NIMDomain,$BOOL_DEBUG,$STR_NBThreads,$BOOL_ExclusiveEnrichment,$BOOL_GenerateNewAlarm,$INT_Interval,$INT_Logsize,$INT_Heartbeat,$INT_QOS);
-my ($ALM_Sev,$ALM_Subsys,$ALM_Suppkey);
+my ($STR_Login,$STR_Password,$STR_NIMDomain,$BOOL_DEBUG,$STR_NBThreads,$BOOL_ExclusiveEnrichment,$INT_Interval,$INT_Logsize,$INT_Heartbeat,$INT_QOS);
+my ($ALM_Sev,$ALM_Subsys,$ALM_Suppkey,$ALM_Message);
 my ($STR_ReadSubject,$STR_PostSubject);
 my $HASH_Robot;
 my $AlarmHandled = 0;
@@ -81,12 +81,12 @@ sub read_configuration {
     $CFGManager->setSection("messages/heartbeat");
     $ALM_Sev        = $CFGManager->get("severity",2);
     $ALM_Subsys     = $CFGManager->get("subsys","1.1");
+    $ALM_Message    = $CFGManager->get('message','static_enrichment heartbeat!');
     $ALM_Suppkey    = $CFGManager->get("suppkey","${Probe_NAME}_alarm_processed");
 
     @EnrichmentRules = ();
     $CFGManager->setSection("enrichment-rules");
     $BOOL_ExclusiveEnrichment = $CFGManager->get("exclusive_enrichment","no");
-    $BOOL_GenerateNewAlarm = $CFGManager->get("generate_new_alarm","no");
 
     my $Rules = $CFGManager->listSections("enrichment-rules");
     foreach my $RuleSection (@$Rules) {
@@ -181,8 +181,7 @@ $handleAlarm = sub {
             ($PDSHash,$enriched) = $_->processAlarm($PDSHash);
             last if $enriched && $BOOL_ExclusiveEnrichment eq "yes";
         }
-        nimPostMessage($STR_PostSubject,Perluim::API::pdsFromHash($PDSHash->{udata})->{pds}) if $BOOL_GenerateNewAlarm eq "no";
-        GenerateAlarm($PDSHash) if $BOOL_GenerateNewAlarm eq "yes";
+        GenerateAlarm($PDSHash);
         lock($AlarmProcessed);
         $AlarmProcessed++;
     }
@@ -230,7 +229,7 @@ $probe->on( timeout => sub {
         $T_Heartbeat = nimTimerCreate();
         my %AlarmObject = (
             severity    => $ALM_Sev,
-            message     => "$AlarmProcessed alarm processed!",
+            message     => $ALM_Message,
             robot       => $HASH_Robot->{robotname},
             domain      => $STR_NIMDomain,
             probe       => $Probe_NAME,
