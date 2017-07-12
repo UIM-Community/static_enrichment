@@ -9,7 +9,13 @@ The probe attach to a queue namned '**static_enrichment**'.
 
 # Benchmark 
 
+When generate_new_alarm is set '**no**' : 
+
 - A single thread can take around 50,000 messages every seconds (with one rule).
+
+When generate new_alarm is set '**yes**' : 
+
+- A single thread can take around 340 messages every seconds (with one rule).
 
 # Configuration 
 
