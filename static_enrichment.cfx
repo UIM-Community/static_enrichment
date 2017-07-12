@@ -21,9 +21,9 @@
 </enrichment-rules>
 <messages> overwrite
     <heartbeat>
-        severity = 5
-        suppkey = test
-        message = alarm message
+        severity = 1
+        suppkey = static_enrichment/suppkey
+        message = static_enrichment probe heartbeat
         subsys = 1.1.
     </heartbeat>
 </messages>
