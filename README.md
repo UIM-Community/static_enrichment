@@ -5,17 +5,19 @@ CA UIM - Static message enrichment
 
 This probe is designed to enrich alarm statically by matching a single field with a perl regexp. All messages are handled in a multithread pool to allow the maximum performance possible.
 
-The probe will attach to a queue namned '**static_enrichment**'. This queue can be overwritted with the configuration parem setup/queue_attach.
+The probe will attach to a queue namned '**static_enrichment**'. This queue can be overwritted with the configuration key setup/queue_attach.
 
 # Benchmark 
 
 When generate_new_alarm is set '**no**' : 
 
-- A single thread can take around 50,000 messages every seconds (with one rule).
+- A single thread can take around 50,000 alarms every seconds (with one rule).
 
 When generate new_alarm is set '**yes**' : 
 
-- A single thread can take around 340 messages every seconds (with one rule).
+- A single thread can take around 340 alarms every seconds (with one rule).
+
+> I Work to improve the second one!
 
 # Configuration 
 
