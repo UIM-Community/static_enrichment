@@ -55,7 +55,7 @@ sub processAlarm {
         my @keyElems    = split(/\./,"$key");
         my $elemRef     = $PDSRef;
         foreach(@keyElems) {
-            if(!defined $elemRef->{$_}) {
+            if($_ ne "udata") {
                 $elemRef->{$_} = $self->getOverwritedValue($key,$PDSRef);
             }
             $elemRef = $elemRef->{$_};

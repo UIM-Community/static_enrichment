@@ -122,6 +122,10 @@ sub toMilliseconds {
     return $second * 1000;
 }
 
+sub isInteger {
+   defined $_[0] && $_[0] =~ /^[+-]?\d+$/;
+}
+
 sub pdsFromHash {
     my ($hashRef) = @_;
     my $PDS = Nimbus::PDS->new;
@@ -131,7 +135,7 @@ sub pdsFromHash {
             $PDS->put($key,pdsFromHash($val),PDS_PDS);
         }
         else {
-            $PDS->put($key,$val,looks_like_number($val) ? PDS_INT : PDS_PCH);
+            $PDS->put($key,$val,isInteger($val) ? PDS_INT : PDS_PCH);
         }
     }
     return $PDS;

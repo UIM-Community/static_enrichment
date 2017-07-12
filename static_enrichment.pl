@@ -18,7 +18,7 @@ use Perluim::Addons::CFGManager;
 
 # Global variables
 $Perluim::API::Debug = 1;
-my ($STR_Login,$STR_Password,$STR_NIMDomain,$BOOL_DEBUG,$STR_NBThreads,$BOOL_ExclusiveEnrichment,$INT_Interval,$INT_Logsize,$INT_Heartbeat,$INT_QOS);
+my ($STR_Login,$STR_Password,$STR_NIMDomain,$BOOL_DEBUG,$STR_NBThreads,$BOOL_ExclusiveEnrichment,$BOOL_GenerateNewAlarm,$INT_Interval,$INT_Logsize,$INT_Heartbeat,$INT_QOS);
 my ($ALM_Sev,$ALM_Subsys,$ALM_Suppkey);
 my ($STR_ReadSubject,$STR_PostSubject);
 my $HASH_Robot;
@@ -86,6 +86,7 @@ sub read_configuration {
     @EnrichmentRules = ();
     $CFGManager->setSection("enrichment-rules");
     $BOOL_ExclusiveEnrichment = $CFGManager->get("exclusive_enrichment","no");
+    $BOOL_GenerateNewAlarm = $CFGManager->get("generate_new_alarm","no");
 
     my $Rules = $CFGManager->listSections("enrichment-rules");
     foreach my $RuleSection (@$Rules) {
@@ -156,14 +157,16 @@ $Logger->info("ROBOTNAME => $HASH_Robot->{robotname}");
 $Logger->info("VERSION => $HASH_Robot->{version}");
 $Logger->nolevel("--------------------------------");
 
-#
-# Routine to post a message from an hashRef object!
-#
-sub POSTMessage {
-    my ($hashRef) = @_;
-    my $PDSObject = Perluim::API::pdsFromHash($hashRef);
-    $PDSObject->post($STR_PostSubject);
-    undef $PDSObject;
+sub GenerateAlarm {
+    my ($PDSHash) = @_;
+    my $PDS = Perluim::API::pdsFromHash($PDSHash);
+    $PDS->string('subject',$STR_PostSubject);
+    my $alarmID = Perluim::API::nimId();
+
+    $Logger->log(1,"Post new alarm $alarmID from $HASH_Robot->{robotname} to spooler!");
+    my ($RC,$RES) = nimRequest("$HASH_Robot->{robotname}",48001,"post_raw",$PDS->data);
+
+    $Logger->log(1,"Failed to send alarm => ".nimError2Txt($RC)) if $RC != NIME_OK;
 }
 
 #
@@ -172,25 +175,19 @@ sub POSTMessage {
 my $handleAlarm;
 my $alarmQueue = Thread::Queue->new();
 $handleAlarm = sub {
-    $Logger->warn("Thread started!");
+    $Logger->info("Thread started!");
     while ( defined ( my $PDSHash = $alarmQueue->dequeue() ) ) {
-        eval {
-            my $enriched = 0;
-            foreach(@EnrichmentRules) {
-                ($PDSHash,$enriched) = $_->processAlarm($PDSHash);
-                last if $enriched && $BOOL_ExclusiveEnrichment eq "yes";
-            }
-            POSTMessage($PDSHash);
-        };
-        if($@) {
-            $Logger->error("Failed to enrich message!");
-            POSTMessage($PDSHash);
+        my $enriched = 0;
+        foreach(@EnrichmentRules) {
+            ($PDSHash,$enriched) = $_->processAlarm($PDSHash);
+            last if $enriched && $BOOL_ExclusiveEnrichment eq "yes";
         }
+        nimPostMessage($STR_PostSubject,Perluim::API::pdsFromHash($PDSHash)->{pds}) if $BOOL_GenerateNewAlarm eq "no";
+        GenerateAlarm($PDSHash) if $BOOL_GenerateNewAlarm eq "yes";
         lock($AlarmProcessed);
         $AlarmProcessed++;
     }
     $Logger->info("Thread finished!");
-    return 1;
 };
 
 # Wait for group threads

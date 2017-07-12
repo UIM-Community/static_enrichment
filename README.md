@@ -33,6 +33,7 @@ The probe attach to a queue namned '**static_enrichment**'.
 -->
 <enrichment-rules>
     exclusive_enrichment = no <!-- if yes: break the processing on the first enrichment rule matched, so only one enrichment will by applied by message -->
+    generate_new_alarm = no <!-- Publish a new complete alarm, allow to update other field than udata but have a high performance cost -->
     <100> <!-- The name of your rule, put what you want like 'superRule' or 55 etc -->
         match_alarm_field = udata.level <!-- field to match -->
         match_alarm_regexp = 1 <!-- regexp (perl) -->
@@ -50,7 +51,7 @@ The probe attach to a queue namned '**static_enrichment**'.
         match_alarm_field = prid 
         match_alarm_regexp = logmon
         <overwrite-rules>
-            origin = OVERWRITED
+            origin = OVERWRITED <!-- only if generate_new_alarm is set to yes -->
             udata.message = #logmon - [udata.message]
         </overwrite-rules>
     </logmonAE>
