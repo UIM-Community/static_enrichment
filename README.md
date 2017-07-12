@@ -32,7 +32,7 @@ When generate new_alarm is set '**yes**' :
     pool_threads = 3 <!-- number of threads in the pool -->
     timeout_interval = 5000 <!-- probe timeout interval, 5000 is ok -->
     heartbeat = 300 <!-- hearbeat alarm processed interval in second -->
-    qos = 300 <!-- QoS (alarm_processed - alarm_handled) interval in second -->
+    qos = 30 <!-- QoS (alarm_processed - alarm_handled) interval in second -->
     <!-- queue_attach = queueName -->
     <!-- login = administrator -->
     <!-- password = password -->

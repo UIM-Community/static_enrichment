@@ -2,12 +2,11 @@
    loglevel = 5
    logsize = 1024
    debug = 0
-   read_subject = alarm1
    post_subject = alarm2
    pool_threads = 3
    timeout_interval = 5000
    heartbeat = 300 
-   qos = 300
+   qos = 30
 </setup>
 <enrichment-rules> overwrite
    exclusive_enrichment = no

@@ -181,7 +181,7 @@ $handleAlarm = sub {
             ($PDSHash,$enriched) = $_->processAlarm($PDSHash);
             last if $enriched && $BOOL_ExclusiveEnrichment eq "yes";
         }
-        nimPostMessage($STR_PostSubject,Perluim::API::pdsFromHash($PDSHash)->{pds}) if $BOOL_GenerateNewAlarm eq "no";
+        nimPostMessage($STR_PostSubject,Perluim::API::pdsFromHash($PDSHash->{udata})->{pds}) if $BOOL_GenerateNewAlarm eq "no";
         GenerateAlarm($PDSHash) if $BOOL_GenerateNewAlarm eq "yes";
         lock($AlarmProcessed);
         $AlarmProcessed++;
@@ -293,8 +293,5 @@ sub main {
 sub get_info {
     my ($hMsg) = @_;
     $Logger->log(0,"get_info callback triggered !");
-    my $PDS = Nimbus::PDS->new; 
-    $PDS->put('alarm_handled',$AlarmHandled,PDS_INT);
-    $PDS->put('alarm_processed',$AlarmProcessed,PDS_INT);
-    nimSendReply($hMsg,NIME_OK,$PDS);
+    nimSendReply($hMsg,NIME_OK);
 }
