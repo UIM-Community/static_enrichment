@@ -120,6 +120,9 @@ sub read_configuration {
     }
 
     $Lib::enrichment_rule::Logger = $Logger;
+
+    # Send QOS Definition to data_engine probe
+    nimQoSSendDefinition("QOS_StaticEnrichment","QOS_StaticEnrichment","Static enrichment alarms stats","s",NIMQOS_DEF_NONE);
     $Logger->nolevel("---------------------------------");
 }
 read_configuration();
@@ -159,19 +162,15 @@ $Logger->nolevel("--------------------------------");
 
 sub GenerateAlarm {
     my ($PDSHash) = @_;
-    my $PDS = Perluim::API::pdsFromHash($PDSHash);
+    my $alarmID = nimId();
+    my $PDS     = pdsFromHash($PDSHash);
     $PDS->string('subject',$STR_PostSubject);
-    my $alarmID = Perluim::API::nimId();
-
+    $PDS->string('nimid',$alarmID);
     $Logger->log(1,"Post new alarm $alarmID from $HASH_Robot->{robotname} to spooler!");
     my ($RC,$RES) = nimRequest("$HASH_Robot->{robotname}",48001,"post_raw",$PDS->data);
-
     $Logger->log(1,"Failed to send alarm => ".nimError2Txt($RC)) if $RC != NIME_OK;
 }
 
-#
-# Threads pool
-#
 my $handleAlarm;
 my $alarmQueue = Thread::Queue->new();
 $handleAlarm = sub {
@@ -261,6 +260,8 @@ $probe->on( timeout => sub {
         my $NIMQOS = nimQoSCreate("QOS_StaticEnrichment",$HASH_Robot->{robotname},$INT_QOS,-1);
         nimQoSSendValue($NIMQOS,"alarm_handle",$AlarmHandled);
         nimQoSSendValue($NIMQOS,"alarm_processed",$AlarmProcessed);
+        $AlarmHandled = 0;
+        $AlarmProcessed = 0;
         nimQoSFree($NIMQOS);
         nimTimerStart($T_QOS);
     }

@@ -9,7 +9,7 @@
    heartbeat = 300 
    qos = 300
 </setup>
-<enrichment-rules>
+<enrichment-rules> overwrite
    exclusive_enrichment = no
    generate_new_alarm = no
    <100>
@@ -21,7 +21,7 @@
       </overwrite-rules>
    </100>
 </enrichment-rules>
-<messages>
+<messages> overwrite
     <heartbeat>
         severity = 5
         suppkey = test

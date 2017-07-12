@@ -5,7 +5,7 @@ CA UIM - Static message enrichment
 
 This probe is designed to enrich alarm statically by matching a single field with a perl regexp. All messages are handled in a multithread pool to allow the maximum performance possible.
 
-The probe attach to a queue namned '**static_enrichment**'.
+The probe will attach to a queue namned '**static_enrichment**'. This queue can be overwritted with the configuration parem setup/queue_attach.
 
 # Benchmark 
 
@@ -31,6 +31,7 @@ When generate new_alarm is set '**yes**' :
     timeout_interval = 5000 <!-- probe timeout interval, 5000 is ok -->
     heartbeat = 300 <!-- hearbeat alarm processed interval in second -->
     qos = 300 <!-- QoS (alarm_processed - alarm_handled) interval in second -->
+    <!-- queue_attach = queueName -->
     <!-- login = administrator -->
     <!-- password = password -->
 </setup>
