@@ -65,7 +65,7 @@ sub read_configuration {
     $STR_Login               = $CFGManager->get("login","administrator");
     $STR_Password            = $CFGManager->get("password");
     $INT_Logsize             = $CFGManager->get("logsize",1024);
-    $STR_ReadSubject         = $CFGManager->get("read_subject");
+    $STR_ReadSubject         = $CFGManager->get("queue_attach",$Probe_NAME);
     $STR_PostSubject         = $CFGManager->get("post_subject");
     $STR_NBThreads           = $CFGManager->get("pool_threads",10);
     $INT_Heartbeat           = $CFGManager->get("heartbeat",300);
