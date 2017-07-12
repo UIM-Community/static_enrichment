@@ -1,7 +1,11 @@
+> This probe is under GNU licence, all right reserved NEURONES IT - 205 Avenue Georges Clemenceau, 92000 Nanterre
+
 # Static_enrichment
 CA UIM - Static message enrichment
 
 This probe is designed to enrich alarm statically by matching a single field with a perl regexp. All messages are handled in a multithread pool to allow the maximum performance possible.
+
+The probe attach to a queue namned '**static_enrichment**'.
 
 # Benchmark 
 
@@ -16,7 +20,6 @@ This probe is designed to enrich alarm statically by matching a single field wit
     loglevel = 1 <!-- classical nimsoft loglevel -->
     logsize = 1024 <!-- logsize in KB -->
     debug = 0 <!-- advanced debug mode -->
-    read_subject = alarm1 <!-- queuename where the probe will attach -->
     post_subject = alarm2 <!-- subject where pds are posted when enrichment is done -->
     pool_threads = 3 <!-- number of threads in the pool -->
     timeout_interval = 5000 <!-- probe timeout interval, 5000 is ok -->
