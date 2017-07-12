@@ -162,6 +162,14 @@ $Logger->nolevel("--------------------------------");
 
 sub GenerateAlarm {
     my ($PDSHash) = @_;
+    if(defined $PDSHash->{os_user1}) {
+        $PDSHash->{user_tag_1} = $PDSHash->{os_user1};
+        delete $PDSHash->{os_user1};
+    }
+    if(defined $PDSHash->{os_user2}) {
+        $PDSHash->{user_tag_2} = $PDSHash->{os_user2};
+        delete $PDSHash->{os_user2};
+    }
     my $alarmID = nimId();
     my $PDS     = pdsFromHash($PDSHash);
     $PDS->string('subject',$STR_PostSubject);
