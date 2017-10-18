@@ -49,7 +49,7 @@ The probe will attach to a queue namned '**static_enrichment**'. This queue can 
         match_alarm_field = prid 
         match_alarm_regexp = logmon
         <overwrite-rules>
-            origin = OVERWRITED <!-- only if generate_new_alarm is set to yes -->
+            origin = OVERWRITED
             udata.message = #logmon - [udata.message]
         </overwrite-rules>
     </logmonAE>
