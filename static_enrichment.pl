@@ -1,7 +1,3 @@
-#
-# All right reserved NEURONES IT - 205 Avenue Georges Clemenceau, 92000 Nanterre
-#
-
 use strict;
 use warnings;
 use lib "E:/Nimsoft/perllib";
