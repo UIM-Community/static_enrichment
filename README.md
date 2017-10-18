@@ -1,5 +1,3 @@
-> This probe is under GNU licence, all right reserved NEURONES IT - 205 Avenue Georges Clemenceau, 92000 Nanterre
-
 # Static_enrichment
 CA UIM - Static message enrichment
 
