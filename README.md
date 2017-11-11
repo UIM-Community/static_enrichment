@@ -1,7 +1,7 @@
 # Static_enrichment
 CA UIM - Asynchronous Static message enrichment
 
-This probe is designed to enrich alarm statically by matching a single field with a perl regexp. All messages are handled in a multithread pool to allow the maximum performance possible.
+This probe is designed to enrich alarm statically by matching a single field with a perl regexp. All messages are handled in a multithread pool to allow the maximum performance possible. All fields can be overwritted and used in the following rules...
 
 The probe will attach to a queue namned '**static_enrichment**'. This queue can be overwritted with the configuration key setup/queue_attach.
 
