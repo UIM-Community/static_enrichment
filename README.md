@@ -74,3 +74,7 @@ The probe will attach to a queue namned '**static_enrichment**'. This queue can 
     </heartbeat>
 </messages>
 ```
+
+# Roadmap v1.1
+
+- Ability to drop message
