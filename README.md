@@ -80,3 +80,8 @@ The probe will attach to a queue namned '**static_enrichment**'. This queue can 
 
 - Ability to drop message
 - Define enrichment scenarios (Road of rules to follow)
+
+### next
+
+- Custom functions (sandbox ?)
+- Middleware implementation (with pre and post functions and scoping).
