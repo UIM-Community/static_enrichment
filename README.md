@@ -11,7 +11,7 @@ The probe will attach to a queue namned '**static_enrichment**'. This queue can 
 
 - Allow to overwrite or create new fields.
 - Allow to chain rules.
-- High-speed Asynchronous enrichment (no performance degradation like NAS or AlarmEnrichment). 
+- High-speed Asynchronous enrichment (no performance degradation on high load like NAS or AlarmEnrichment). 
 - Alarm_enrichment configuration like ! 
 - Low memory and processing overhead.
 
