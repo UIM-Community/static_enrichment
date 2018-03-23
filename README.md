@@ -79,6 +79,7 @@ The probe will attach to a queue namned '**static_enrichment**'. This queue can 
 # Roadmap v1.1
 
 - Ability to drop message
+- Fix PDS Parsing (asHash() method limitation)
 - Define enrichment scenarios (Road of rules to follow)
 
 ### next
