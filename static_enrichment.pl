@@ -180,6 +180,9 @@ my $alarmQueue = Thread::Queue->new();
 $handleAlarm = sub {
     $Logger->info("Thread started!");
     while ( defined ( my $PDSHash = $alarmQueue->dequeue() ) ) {
+        if ($BOOL_DEBUG) {
+            $Logger->info(Dumper($PDSHash));
+        }
         my $enriched = 0;
         foreach(@EnrichmentRules) {
             ($PDSHash,$enriched) = $_->processAlarm($PDSHash);
