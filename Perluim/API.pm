@@ -49,6 +49,7 @@ our $IDefaultRequest = {
     nimId
     generateAlarm
     pdsFromHash
+    pdsFromArray
     assignHash
     cleanDirectory
 );
@@ -126,16 +127,40 @@ sub isInteger {
    defined $_[0] && $_[0] =~ /^[+-]?\d+$/;
 }
 
+sub pdsFromArray {
+    my ($arrayRef) = @_;
+    return if ref($arrayRef) ne "ARRAY";
+
+    my $PDS = Nimbus::PDS->new;
+    my $index = 0;
+    foreach(@{ $arrayRef }) {
+        if (ref($_) eq "HASH") {
+            $PDS->put($index, pdsFromHash($_), PDS_PDS);
+        }
+        elsif (ref($_) eq "ARRAY") {
+            $PDS->put($index, pdsFromArray($_), PDS_PDS);
+        }
+        else {
+            $PDS->put($index, $_, looks_like_number($_) ? PDS_INT : PDS_PCH);
+        }
+        $index++;
+    }
+    return $PDS;
+}
+
 sub pdsFromHash {
     my ($hashRef) = @_;
     my $PDS = Nimbus::PDS->new;
     for my $key (keys %{ $hashRef }) {
         my $val = $hashRef->{$key};
-        if(ref($val) eq "HASH") {
-            $PDS->put($key,pdsFromHash($val),PDS_PDS);
+        if (ref($val) eq "HASH") {
+            $PDS->put($key, pdsFromHash($val), PDS_PDS);
+        }
+        elsif (ref($val) eq "ARRAY") {
+            $PDS->put($key, pdsFromArray($val), PDS_PDS);
         }
         else {
-            $PDS->put($key,$val,isInteger($val) ? PDS_INT : PDS_PCH);
+            $PDS->put($key, $val, looks_like_number($val) ? PDS_INT : PDS_PCH);
         }
     }
     return $PDS;
