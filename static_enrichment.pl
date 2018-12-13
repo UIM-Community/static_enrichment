@@ -49,6 +49,58 @@ sub scriptDieHandler {
     exit(1);
 }
 
+use constant {
+    PDS_PPCH => 8,
+    PDS_PPI => 3,
+    PDS_PPDS => 24
+};
+
+sub asHash {
+    my $pds  = shift;
+    my $lev  = shift || 1;
+    my ($rc, $k, $t, $s, $d);
+    my $hptr = {};
+    my $line = "-"x$lev;
+
+    while ($rc == 0) {
+        ($rc, $k, $t, $s, $d) = pdsGetNext($pds);
+        next if $rc != PDS_ERR_NONE;
+
+        if ($t == PDS_PDS) {
+            if (!defined($hptr->{$k})) {
+                nimLog(2,"PDS::asHash $line>Adding PDS: $k\n");
+                $hptr->{$k}={};
+            }
+            asHash($self,$hptr->{$k},$d,$lev+1);
+            pdsDelete($d);
+        }
+        elsif ($t == PDS_PPCH || $t == PDS_PPI) {
+            nimLog(2,"PDS::asHash $line>Adding PDS_PPCH/PDS_PPI Array: $key\n");
+            my @ret = ();
+            for (my $index = 0; my ($rc_table, $rd) = pdsGetTable($pds, PDS_PCH, $k, $index); $index++) {
+                last if $rc_table != PDS_ERR_NONE;
+                push(@ret, $rd);
+            }
+            $hptr->{$k} = \@ret;
+        }
+        elsif ($t == PDS_PPDS) {
+            nimLog(2,"PDS::asHash $line>Adding PDS_PPDS Array: $key\n");
+            my @ret = ();
+            for (my $index = 0; my ($rc_table, $rd) = pdsGetTable($pds, PDS_PDS, $k, $index); $index++) {
+                last if $rc_table != PDS_ERR_NONE;
+                push(@ret, Nimbus::PDS->new($rd)->asHash);
+            }
+            $hptr->{$k} = \@ret;
+        }
+        else {
+            nimLog(2,"PDS::asHash $line>Adding key/value: $k = $d");
+            $hptr->{$k} = $d;
+        }
+    };
+
+    return $hptr;
+}
+
 #
 # Init and configuration configuration
 #
@@ -275,8 +327,8 @@ $probe->on( timeout => sub {
 
 # Hubpost handle!
 sub hubpost {
-    my ($hMsg,$udata,$full) = @_;
-    $alarmQueue->enqueue(Nimbus::PDS->new($full)->asHash());
+    my ($hMsg, $udata, $full) = @_;
+    $alarmQueue->enqueue(asHash($full));
     $AlarmHandled++;
     nimSendReply($hMsg);
 }
@@ -287,17 +339,10 @@ $probe->start;
 $Logger->nolevel("--------------------------------");
 
 #
-# Main method (called in timeout callback of the probe).
-#
-sub main {
-    $Logger->info('Main executed!');
-}
-
-#
 # get_info callback!
 #
 sub get_info {
     my ($hMsg) = @_;
-    $Logger->log(0,"get_info callback triggered !");
-    nimSendReply($hMsg,NIME_OK);
+    $Logger->log(0, "get_info callback triggered !");
+    nimSendReply($hMsg, NIME_OK);
 }
