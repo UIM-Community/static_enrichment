@@ -1,5 +1,7 @@
 package Lib::enrichment_rule;
 use Data::Dumper;
+use Scalar::Util qw(looks_like_number);
+
 $Data::Dumper::Deparse = 1;
 
 our $Logger;
@@ -27,11 +29,12 @@ sub getOverwritedValue {
         my @keyElems    = split(/\./,"$_");
         my $elemRef     = $PDSRef;
         foreach(@keyElems) {
-            if(!defined $elemRef->{$_}) {
+            my $value = looks_like_number($_) ? $elemRef[$_] : $elemRef->{$_};
+            if(not defined $value) {
                 $elemRef = "";
                 last;
             }
-            $elemRef = $elemRef->{$_};
+            $elemRef = $value;
         }
         my $replace = ${ elemRef };
         $Str =~ s/\[$_\]/$replace/g;
