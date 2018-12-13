@@ -142,6 +142,7 @@ sub read_configuration {
         my $match_alarm_field   = $CFGManager->get("match_alarm_field");
         my $match_alarm_regexp  = $CFGManager->get("match_alarm_regexp");
         my $fallback_value  = $CFGManager->get("fallback_value", "");
+        my $drop  = $CFGManager->get("drop", 0);
         if(defined $match_alarm_field && defined $match_alarm_regexp) {
             my %OverwriteHash = ();
             $CFGManager->setSection("$RuleSection/overwrite-rules");
@@ -154,6 +155,7 @@ sub read_configuration {
             if(scalar keys %OverwriteHash > 0) {
                 push(@EnrichmentRules,Lib::enrichment_rule->new({
                     name => $RuleSection,
+                    drop => $drop,
                     fallbackValue => $fallback_value,
                     field => $match_alarm_field,
                     regexp => qr/$match_alarm_regexp/,
@@ -233,13 +235,19 @@ my $handleAlarm;
 my $alarmQueue = Thread::Queue->new();
 $handleAlarm = sub {
     $Logger->info("Thread started!");
-    while ( defined ( my $PDSHash = $alarmQueue->dequeue() ) ) {
+    HT: while ( defined ( my $PDSHash = $alarmQueue->dequeue() ) ) {
         if ($BOOL_DEBUG) {
             $Logger->info(Dumper($PDSHash));
         }
         my $enriched = 0;
+        my $drop = 0;
+
         foreach(@EnrichmentRules) {
-            ($PDSHash,$enriched) = $_->processAlarm($PDSHash);
+            ($PDSHash, $enriched, $drop) = $_->processAlarm($PDSHash);
+            if ($drop) {
+                $Logger->info("Drop alarm with nimid $PDSHash->{nimid}");
+                continue HT;
+            }
             last if $enriched && $BOOL_ExclusiveEnrichment eq "yes";
         }
         GenerateAlarm($PDSHash);

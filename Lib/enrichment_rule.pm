@@ -46,12 +46,15 @@ sub processAlarm {
     my ($self,$PDSRef) = @_;
     my @fieldArr    = split(/\./,"$self->{field}");
     my $fieldValue  = $PDSRef;
+
     foreach(@fieldArr) {
-        return $PDSRef,0 if !defined $fieldValue->{$_};
+        return $PDSRef,0,0 if !defined $fieldValue->{$_};
         $fieldValue = $fieldValue->{$_};
     }
     undef @fieldArr;
-    return $PDSRef,0 if !$self->isMatch(${fieldValue});
+
+    return $PDSRef,0,0 unless $self->isMatch(${fieldValue});
+    return $PDSRef,0,1 if $self->{drop} == 1;
 
     $Logger->log(1,"$self->{name}:: Processing enrichment on $PDSRef->{nimid}");
     for my $key (keys %{ $self->{overwrite} }) {
@@ -64,7 +67,8 @@ sub processAlarm {
             $elemRef = $elemRef->{$_};
         }
     }
-    return $PDSRef,1;
+
+    return $PDSRef,1,0;
 }
 
 1;
