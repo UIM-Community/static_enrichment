@@ -31,7 +31,7 @@ sub getOverwritedValue {
         foreach(@keyElems) {
             my $value = looks_like_number($_) ? $elemRef[$_] : $elemRef->{$_};
             if(not defined $value) {
-                $elemRef = "";
+                $elemRef = $self->{fallbackValue} || "";
                 last;
             }
             $elemRef = $value;

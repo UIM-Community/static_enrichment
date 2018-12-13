@@ -141,6 +141,7 @@ sub read_configuration {
         $CFGManager->setSection($RuleSection);
         my $match_alarm_field   = $CFGManager->get("match_alarm_field");
         my $match_alarm_regexp  = $CFGManager->get("match_alarm_regexp");
+        my $fallback_value  = $CFGManager->get("fallback_value", "");
         if(defined $match_alarm_field && defined $match_alarm_regexp) {
             my %OverwriteHash = ();
             $CFGManager->setSection("$RuleSection/overwrite-rules");
@@ -153,6 +154,7 @@ sub read_configuration {
             if(scalar keys %OverwriteHash > 0) {
                 push(@EnrichmentRules,Lib::enrichment_rule->new({
                     name => $RuleSection,
+                    fallbackValue => $fallback_value,
                     field => $match_alarm_field,
                     regexp => qr/$match_alarm_regexp/,
                     overwrite => \%OverwriteHash
