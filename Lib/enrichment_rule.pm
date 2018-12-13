@@ -25,9 +25,11 @@ sub getOverwritedValue {
     my ($self,$key,$PDSRef) = @_;
     my $Str = $self->{overwrite}->{$key};
     my @matches = ( $Str =~ /\[([A-Za-z0-9\._]+)\]/g );
+
     foreach (@matches) {
         my @keyElems    = split(/\./,"$_");
         my $elemRef     = $PDSRef;
+
         foreach(@keyElems) {
             my $value = looks_like_number($_) ? $elemRef[$_] : $elemRef->{$_};
             if(not defined $value) {
@@ -39,6 +41,7 @@ sub getOverwritedValue {
         my $replace = ${ elemRef };
         $Str =~ s/\[$_\]/$replace/g;
     }
+
     return $Str;
 }
 
@@ -48,7 +51,7 @@ sub processAlarm {
     my $fieldValue  = $PDSRef;
 
     foreach(@fieldArr) {
-        return $PDSRef,0,0 if !defined $fieldValue->{$_};
+        return $PDSRef,0,0 unless defined $fieldValue->{$_};
         $fieldValue = $fieldValue->{$_};
     }
     undef @fieldArr;
@@ -60,6 +63,7 @@ sub processAlarm {
     for my $key (keys %{ $self->{overwrite} }) {
         my @keyElems    = split(/\./,"$key");
         my $elemRef     = $PDSRef;
+
         foreach(@keyElems) {
             if($_ ne "udata") {
                 $elemRef->{$_} = $self->getOverwritedValue($key,$PDSRef);
