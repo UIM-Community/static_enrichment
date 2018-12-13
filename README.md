@@ -78,6 +78,8 @@ The probe will attach to a queue namned '**static_enrichment**'. This queue can 
 </messages>
 ```
 
+When debug mode is enabled it will dump Alarms on arrival.
+
 ## Roadmap v1.1
 
 - Ability to drop message.
@@ -88,3 +90,6 @@ The probe will attach to a queue namned '**static_enrichment**'. This queue can 
 ## Know defects
 
 - CA UIM Perl SDK Nimbus::PDS implementation limitation
+
+## Licence
+MIT
