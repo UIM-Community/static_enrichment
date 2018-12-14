@@ -71,7 +71,7 @@ sub asHash {
                 nimLog(2,"PDS::asHash $line>Adding PDS: $k\n");
                 $hptr->{$k}={};
             }
-            asHash($self,$hptr->{$k},$d,$lev+1);
+            asHash($hptr->{$k}, $lev+1);
             pdsDelete($d);
         }
         elsif ($t == PDS_PPCH || $t == PDS_PPI) {
@@ -246,7 +246,7 @@ $handleAlarm = sub {
             ($PDSHash, $enriched, $drop) = $_->processAlarm($PDSHash);
             if ($drop) {
                 $Logger->info("Drop alarm with nimid $PDSHash->{nimid}");
-                continue HT;
+                next HT;
             }
             last if $enriched && $BOOL_ExclusiveEnrichment eq "yes";
         }
