@@ -57,9 +57,10 @@ use constant {
 sub asHash {
     my $pds  = shift;
     my $lev  = shift || 1;
-    my ($rc, $k, $t, $s, $d);
+    my ($k, $t, $s, $d);
     my $hptr = {};
     my $line = "-"x$lev;
+    my $rc = 0;
 
     while ($rc == 0) {
         ($rc, $k, $t, $s, $d) = pdsGetNext($pds);
