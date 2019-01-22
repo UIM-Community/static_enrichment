@@ -74,7 +74,7 @@ sub asHash {
             pdsDelete($d);
         }
         elsif ($t == PDS_PPCH || $t == PDS_PPI) {
-            nimLog(2,"PDS::asHash $line>Adding PDS_PPCH/PDS_PPI Array: $\n");
+            nimLog(2,"PDS::asHash $line>Adding PDS_PPCH/PDS_PPI Array: $k\n");
             my @ret = ();
             for (my $index = 0; my ($rc_table, $rd) = pdsGetTable($pds, PDS_PCH, $k, $index); $index++) {
                 last if $rc_table != PDS_ERR_NONE;
