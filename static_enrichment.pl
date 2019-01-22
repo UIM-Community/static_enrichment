@@ -1,5 +1,4 @@
 use strict;
-use warnings;
 use lib "E:/Nimsoft/perllib";
 use Data::Dumper;
 $Data::Dumper::Deparse = 1;
@@ -75,7 +74,7 @@ sub asHash {
             pdsDelete($d);
         }
         elsif ($t == PDS_PPCH || $t == PDS_PPI) {
-            nimLog(2,"PDS::asHash $line>Adding PDS_PPCH/PDS_PPI Array: $key\n");
+            nimLog(2,"PDS::asHash $line>Adding PDS_PPCH/PDS_PPI Array: $\n");
             my @ret = ();
             for (my $index = 0; my ($rc_table, $rd) = pdsGetTable($pds, PDS_PCH, $k, $index); $index++) {
                 last if $rc_table != PDS_ERR_NONE;
@@ -84,7 +83,7 @@ sub asHash {
             $hptr->{$k} = \@ret;
         }
         elsif ($t == PDS_PPDS) {
-            nimLog(2,"PDS::asHash $line>Adding PDS_PPDS Array: $key\n");
+            nimLog(2,"PDS::asHash $line>Adding PDS_PPDS Array: $k\n");
             my @ret = ();
             for (my $index = 0; my ($rc_table, $rd) = pdsGetTable($pds, PDS_PDS, $k, $index); $index++) {
                 last if $rc_table != PDS_ERR_NONE;
