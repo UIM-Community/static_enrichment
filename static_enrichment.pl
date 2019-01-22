@@ -69,9 +69,9 @@ sub asHash {
         if ($t == PDS_PDS) {
             if (!defined($hptr->{$k})) {
                 nimLog(2,"PDS::asHash $line>Adding PDS: $k\n");
-                $hptr->{$k}={};
+                $hptr->{$k} = {};
             }
-            asHash($hptr->{$k}, $lev+1);
+            $hptr->{$k} = asHash($value, $lev+1);
             pdsDelete($d);
         }
         elsif ($t == PDS_PPCH || $t == PDS_PPI) {
@@ -88,7 +88,7 @@ sub asHash {
             my @ret = ();
             for (my $index = 0; my ($rc_table, $rd) = pdsGetTable($pds, PDS_PDS, $k, $index); $index++) {
                 last if $rc_table != PDS_ERR_NONE;
-                push(@ret, Nimbus::PDS->new($rd)->asHash);
+                push(@ret, asHash($rd));
             }
             $hptr->{$k} = \@ret;
         }
