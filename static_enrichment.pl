@@ -71,7 +71,7 @@ sub asHash {
                 nimLog(2,"PDS::asHash $line>Adding PDS: $k\n");
                 $hptr->{$k} = {};
             }
-            $hptr->{$k} = asHash($value, $lev+1);
+            $hptr->{$k} = asHash($d, $lev+1);
             pdsDelete($d);
         }
         elsif ($t == PDS_PPCH || $t == PDS_PPI) {
