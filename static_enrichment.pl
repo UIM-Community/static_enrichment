@@ -1,4 +1,4 @@
-use strict;
+use warnings;
 use lib "E:/Nimsoft/perllib";
 use Data::Dumper;
 $Data::Dumper::Deparse = 1;
